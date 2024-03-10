@@ -7,7 +7,7 @@ type FileUploaderProps = {
     mediaUrl: string;
 }
 
-const FileUploader = ({ fieldChange, mediaUrl }: FileUploaderProps) => {
+const FileUploader = ({ fieldChange }: FileUploaderProps) => {
 
     const [fileUrl, setFileUrl] = useState('');
     const [file, setFile] = useState<File[]>([]);

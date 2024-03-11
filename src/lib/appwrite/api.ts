@@ -1,4 +1,4 @@
-import { INewPost, INewUser } from "@/types";
+import { INewPost, INewUser, IUpdatePost } from "@/types";
 import { ID, Query } from "appwrite";
 import { account, appwriteConfig, avatars, databases, storage } from "./config";
 
@@ -178,7 +178,8 @@ export async function getRecentPosts() {
 
 }
 
-export async function likePost(postId: string, likesArray: string[]){
+////========= LIKE AND SAVES AND DELETE SAVES =============== //////
+export async function likePost(postId: string, likesArray: string[]) {
     try {
         const updatedPost = await databases.updateDocument(
             appwriteConfig.databaseId,
@@ -188,14 +189,14 @@ export async function likePost(postId: string, likesArray: string[]){
                 likes: likesArray
             }
         )
-        if(!updatedPost) throw Error;
+        if (!updatedPost) throw Error;
 
         return updatedPost;
     } catch (error) {
         console.log(error)
     }
 }
-export async function savePost(postId: string, userId: string){
+export async function savePost(postId: string, userId: string) {
     try {
         const updatedPost = await databases.createDocument(
             appwriteConfig.databaseId,
@@ -206,24 +207,102 @@ export async function savePost(postId: string, userId: string){
                 post: postId
             }
         )
-        if(!updatedPost) throw Error;
+        if (!updatedPost) throw Error;
 
         return updatedPost;
     } catch (error) {
         console.log(error)
     }
 }
-export async function deleteSavedPost(savedRecordId: string){
+export async function deleteSavedPost(savedRecordId: string) {
     try {
         const statusCode = await databases.deleteDocument(
             appwriteConfig.databaseId,
             appwriteConfig.savesCollectionId,
             savedRecordId,
         )
-        if(!statusCode) throw Error;
+        if (!statusCode) throw Error;
 
         return { status: 'ok' };
     } catch (error) {
+        console.log(error)
+    }
+}
+
+export async function getPostById(postId: string) {
+    try {
+        const post = await databases.getDocument(
+            appwriteConfig.databaseId,
+            appwriteConfig.postCollectionId,
+            postId
+        )
+        return post;
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+export async function updatePost(post: IUpdatePost) {
+    const hasFileToUpdate = post.file.length > 0;
+    try {
+
+        let image = {
+            imageUrl: post.imageUrl,
+            imageId: post.imageId
+        }
+
+        if (hasFileToUpdate) {
+            //upload image to storage
+            const uploadedFile = await uploadFile(post.file[0]);
+            if (!uploadedFile) throw Error;
+
+            //get file url
+            const fileUrl = getFilePreview(uploadedFile.$id);
+            if (!fileUrl) {
+                await deleteFile(uploadedFile.$id);
+                throw Error;
+            }
+
+            image = { ...image, imageUrl: fileUrl, imageId: uploadedFile.$id}
+        }
+
+
+
+        const tags = post.tags?.replace(/ /g, '').split(',') || [];
+
+        const updatedPost = await databases.updateDocument(
+            appwriteConfig.databaseId,
+            appwriteConfig.postCollectionId,
+            post.postId,
+            {
+                caption: post.caption,
+                imageUrl: image,
+                imageId: image.imageId,
+                location: post.location,
+                tags: tags
+            }
+        )
+        if (!updatedPost) {
+            await deleteFile(post.imageId);
+            throw Error;
+        }
+        return updatedPost;
+
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+export async function deletePost( postId: string, imageId: string) {
+    if(!postId || !imageId) throw Error;
+    try {
+        await databases.deleteDocument(
+            appwriteConfig.databaseId,
+            appwriteConfig.postCollectionId,
+            postId
+        )
+        return { status: 'ok' };
+    } catch (error) { 
         console.log(error)
     }
 }

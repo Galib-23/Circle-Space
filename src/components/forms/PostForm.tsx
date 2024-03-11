@@ -15,6 +15,7 @@ import { useCreatePost } from "@/lib/react-query/queriesAndMutations"
 
 type PostFormProps = {
     post?: Models.Document;
+    action: 'Create' | 'Update';
 }
 
 const PostForm = ({ post }: PostFormProps) => {

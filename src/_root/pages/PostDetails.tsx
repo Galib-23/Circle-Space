@@ -2,7 +2,7 @@
 const PostDetails = () => {
   return (
     <div>
-      
+      details
     </div>
   )
 }

@@ -2,6 +2,9 @@ import { useUserContext } from "@/context/AuthContext"
 import { Models } from "appwrite"
 import { Link } from "react-router-dom"
 import PostStats from "./PostStats";
+import { MdDelete } from "react-icons/md";
+import { useDeleteSavedPost, useGetCurrentUser } from "@/lib/react-query/queriesAndMutations";
+import { useToast } from "../ui/use-toast";
 
 type GridPostListProps = {
     posts: Models.Document[];
@@ -10,7 +13,20 @@ type GridPostListProps = {
 }
 const GridPostList = ({ posts, showUser = true, showStats = true }: GridPostListProps) => {
 
+    const { toast } = useToast();
     const { user } = useUserContext();
+    const { data: currentUser } = useGetCurrentUser();
+    const { mutateAsync: deleteSaved} = useDeleteSavedPost();
+
+    const handleDeleteSavedPost = async (post: Models.Document) => {
+        const savedPost = currentUser?.save.find((record: Models.Document) => record.post.$id === post.$id);
+        const deleteSavedRes = await deleteSaved(savedPost.$id);
+        if(!deleteSavedRes){
+            toast({title: 'Something went wrong!'})
+        }else{
+            toast({title: 'Post removed successfully'})
+        }
+    }
 
     return (
         <ul className="grid-container">
@@ -34,8 +50,10 @@ const GridPostList = ({ posts, showUser = true, showStats = true }: GridPostList
                                 )
                             }
                             {
-                                showStats && (
+                                showStats ? (
                                     <PostStats post={post} userId={user.id} />
+                                ) : (
+                                    <MdDelete onClick={()=>handleDeleteSavedPost(post)} className="text-2xl cursor-pointer text-red" />
                                 )
                             }
                         </div>

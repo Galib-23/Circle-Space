@@ -1,18 +1,31 @@
 import Loader from "@/components/shared/Loader";
 import PostStats from "@/components/shared/PostStats";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/use-toast";
 import { useUserContext } from "@/context/AuthContext";
-import { useGetPostById } from "@/lib/react-query/queriesAndMutations"
+import { useDeletePost, useGetPostById } from "@/lib/react-query/queriesAndMutations"
 import { timeAgo } from "@/lib/utils";
-import { Link, useParams } from "react-router-dom"
+import { Link, useNavigate, useParams } from "react-router-dom"
 
 const PostDetails = () => {
+
+  const { toast } = useToast();
+  const navigate = useNavigate();
   const { id } = useParams();
   const { data: post, isPending } = useGetPostById(id || '');
+  const { mutateAsync: deletePost } = useDeletePost();
   const { user } = useUserContext();
 
-  const handleDeletePost = () => {
-
+  async function handleDeletePost(postId: string, imageId: string) {
+      const deleteRes = await deletePost({
+        postId, imageId
+      })
+      if(!deleteRes){
+        toast({title: 'Sorry, try again.'})
+      }else{
+        toast({title: 'Post deleted successfully.'})
+        navigate('/');
+      }
   }
 
   return (
@@ -40,7 +53,7 @@ const PostDetails = () => {
                     <img src="/assets/icons/edit.svg" alt="edit" width={24} height={24} />
                   </Link>
                   <Button
-                    onClick={handleDeletePost}
+                    onClick={() =>handleDeletePost(post?.$id || '', post?.imageId || '')}
                     variant="ghost"
                     className={`post_details-delete_btn ${user.id !== post?.creator.$id && 'hidden'}`}
                   >

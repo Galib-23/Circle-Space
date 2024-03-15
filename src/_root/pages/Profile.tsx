@@ -22,9 +22,13 @@ const Profile = () => {
       <h2 className="mt-2 text-xl lg:text-2xl lg:mt-4">{currentUser.name}</h2>
       <p className="text-gray-400 mt-1">@{currentUser.username}</p>
       <p className="text-white text-xs mb-3 mt-2">{currentUser.bio || '👋👋 Hey there! I am using circlespace'}</p>
-      <Link to={`/update-profile/${id}`}>
-        <p className="flex items-center gap-1 text-sm text-blue-700 cursor-pointer underline">Edit Profile <FaUserEdit /></p>
-      </Link>
+      {
+        id === currentUser.$id && (
+          <Link to={`/update-profile/${id}`}>
+            <p className="flex items-center gap-1 text-sm text-blue-700 cursor-pointer underline">Edit Profile <FaUserEdit /></p>
+          </Link>
+        )
+      }
       <h2 className="text-xl font-semibold mt-9 mb-2">Posts</h2>
       {
         isPending ? <Loader /> : (

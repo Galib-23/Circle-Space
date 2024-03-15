@@ -301,6 +301,7 @@ export async function deletePost(postId: string, imageId: string) {
 }
 
 export async function getInfinitePosts({ pageParam }: { pageParam: number}){
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const queries: any[] = [Query.orderDesc('$updatedAt'), Query.limit(10)];
     if(pageParam){
         queries.push(Query.cursorAfter(pageParam.toString()));
@@ -346,3 +347,18 @@ export async function getUsers(){
         console.log(error)
     }
 }
+
+export async function getSavedPosts(){
+    try {
+        const savedPost = await databases.listDocuments(
+            appwriteConfig.databaseId,
+            appwriteConfig.savesCollectionId,
+            [Query.orderDesc("$createdAt")],
+        )
+        if(!savedPost) throw Error;
+        return savedPost;
+    } catch (error) {
+        console.log(error);
+    }
+}
+

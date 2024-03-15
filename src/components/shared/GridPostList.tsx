@@ -7,7 +7,7 @@ import { useDeleteSavedPost, useGetCurrentUser } from "@/lib/react-query/queries
 import { useToast } from "../ui/use-toast";
 
 type GridPostListProps = {
-    posts: Models.Document[];
+    posts: Models.Document[] | [];
     showUser?: boolean;
     showStats?: boolean;
 }

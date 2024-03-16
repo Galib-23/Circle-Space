@@ -16,14 +16,14 @@ const Topbar = () => {
   
 
   return (
-    <section className="topbar">
-      <div className="flex-between py-4 px-5">
+    <section className="topbar overflow-x-hidden">
+      <div className="flex-between px-3 py-4">
         <Link to='/' className="flex gap-3 items-center">
           <img 
-          src="/assets/images/logo.svg" 
+          src="/assets/images/logo.png" 
           alt="logo"
-          width={130}
-          height={325}
+          width={150}
+          height={100}
            />
         </Link>
 

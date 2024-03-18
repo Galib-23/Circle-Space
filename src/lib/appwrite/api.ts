@@ -215,23 +215,6 @@ export async function savePost(postId: string, userId: string) {
     }
 }
 
-export async function createMessage(message: string, userId: string) {
-    try {
-        const newMessage = await databases.createDocument(
-            appwriteConfig.databaseId,
-            appwriteConfig.messageCollectionId,
-            ID.unique(),
-            {
-                messageBody: message,
-                user: userId
-            }
-        )
-        if(!newMessage) throw Error;
-        return newMessage;
-    } catch (error) {
-        console.log(error);
-    }
-}
 export async function deleteSavedPost(savedRecordId: string) {
     try {
         const statusCode = await databases.deleteDocument(
@@ -369,6 +352,7 @@ export async function getUsers() {
     }
 }
 
+
 export async function getSavedPosts() {
     try {
         const savedPost = await databases.listDocuments(
@@ -432,16 +416,49 @@ export async function updateUser(user: IUpdateUser) {
 
 export async function getUserById(userId: string) {
     try {
-      const user = await databases.getDocument(
-        appwriteConfig.databaseId,
-        appwriteConfig.userCollectionId,
-        userId
-      );
-  
-      if (!user) throw Error;
-  
-      return user;
+        const user = await databases.getDocument(
+            appwriteConfig.databaseId,
+            appwriteConfig.userCollectionId,
+            userId
+        );
+
+        if (!user) throw Error;
+
+        return user;
     } catch (error) {
-      console.log(error);
+        console.log(error);
     }
-  }
+}
+
+export async function createMessage(message: string, sender: string, reciever: string) {
+    try {
+        const newMessage = await databases.createDocument(
+            appwriteConfig.databaseId,
+            appwriteConfig.messageCollectionId,
+            ID.unique(),
+            {
+                messageBody: message,
+                sender: sender,
+                reciever: reciever
+            }
+        )
+        if (!newMessage) throw Error;
+        return newMessage;
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+// export async function getMessages() {
+//     try {
+//         const messages = await databases.listDocuments(
+//             appwriteConfig.databaseId,
+//             appwriteConfig.messageCollectionId,
+//             [Query.orderDesc("$createdAt"), Query.limit(20)]
+//         );
+//         if (!messages) throw Error;
+//         return messages;
+//     } catch (error) {
+//         console.log(error);
+//     }
+// }

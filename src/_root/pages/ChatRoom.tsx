@@ -7,6 +7,11 @@ import { Button } from "@/components/ui/button"
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form"
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
+import { useEffect, useState } from "react";
+import { appwriteConfig, client, databases } from "@/lib/appwrite/config";
+import { Models, Query } from "appwrite";
+import Loader from "@/components/shared/Loader";
+import { convertTime } from "@/lib/utils";
 
 const formSchema = z.object({
   message: z.string().min(1, {
@@ -14,32 +19,75 @@ const formSchema = z.object({
   }),
 })
 
-const ChatRoom = () => {
 
-  const { toast } = useToast()
+const ChatRoom = () => {
+  const { toast } = useToast();
   const { id } = useParams();
   const { data: userChattingTo } = useGetUserById(id || "");
   const { mutateAsync: createMessage } = useCreateMessage();
   const { data: currentUser } = useGetCurrentUser();
+  const [messages, setMessages] = useState<Models.Document[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    getMessages();
+    const unsubscribe = client.subscribe(`databases.${appwriteConfig.databaseId}.collections.${appwriteConfig.messageCollectionId}.documents`, response => {
+      if (response.events.includes("databases.*.collections.*.documents.*.create")) {
+        setMessages(prevState => [response.payload, ...prevState]);
+      }
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, []);
+
+  async function getMessages() {
+    try {
+      const messages = await databases.listDocuments(
+        appwriteConfig.databaseId,
+        appwriteConfig.messageCollectionId,
+        [Query.orderAsc("$createdAt"), Query.limit(20)],
+      );
+      if (!messages) throw Error;
+      setMessages(messages.documents);
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+      setLoading(false); 
+    }
+  }
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       message: "",
     },
-  })
+  });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    if (!currentUser || !currentUser.$id) {
+      return toast({ title: 'User not authenticated.' });
+    }
     const messageRes = await createMessage({
       message: values.message,
-      userId: currentUser?.$id || '',
-    })
+      sender: currentUser.$id,
+      reciever: id || '',
+    });
     if (!messageRes) {
-      return toast({ title: 'Sign in failed. Please try againg' })
+      return toast({ title: 'Failed to send message. Please try again.' });
     }
     form.reset();
   }
-
+  if (!currentUser) return <Loader />
+  // console.log(currentUser.$id)
+  // console.log(id);
+  // console.log(messages)
+  const filteredMessages = messages.filter((message: Models.Document) =>
+    (message.sender === currentUser?.$id && message.reciever === id) ||
+    (message.reciever === currentUser?.$id && message.sender === id)
+  );
+  console.log(filteredMessages)
   return (
     <div className="h-screen flex flex-col w-full p-1 lg:p-10">
       <Link to={`/chats/${userChattingTo?.$id}`} className="flex items-center gap-3 mb-8">
@@ -47,7 +95,27 @@ const ChatRoom = () => {
         <p className="text-lg">{userChattingTo?.name}</p>
       </Link>
       <div className="flex-1 overflow-y-scroll">
-        <h1>messagesss</h1>
+        {loading ? (
+          <Loader />
+        ) : (
+          <ul>
+            {filteredMessages.map((message) => (
+              <li key={message.$id} className="flex justify-between items-baseline mt-3">
+                <div className="flex items-center gap-3 border-[1px] border-violet-400 w-fit p-2 rounded-xl">
+                  <img className="w-8 h-8 rounded-full" src={
+                    message.sender === currentUser.$id ?
+                      currentUser.imageUrl : userChattingTo?.imageUrl
+                  } alt="" />
+                  {message.messageBody}
+                </div>
+                <div>
+                  <p className="text-xs">{convertTime(message.$createdAt)}</p>
+                </div>
+              </li>
+
+            ))}
+          </ul>
+        )}
       </div>
 
       <div className="mt-4">
@@ -70,7 +138,7 @@ const ChatRoom = () => {
         </Form>
       </div>
     </div>
-  )
+  );
 }
 
-export default ChatRoom
+export default ChatRoom;

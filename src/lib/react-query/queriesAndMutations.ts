@@ -2,7 +2,6 @@ import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from "@tansta
 import { createMessage, createPost, createUserAccount, deletePost, deleteSavedPost, getCurrentUser, getInfinitePosts, getPostById, getRecentPosts, getSavedPosts, getUserById, getUsers, likePost, savePost, searchPosts, signInAccount, signOutAccount, updatePost, updateUser } from "../appwrite/api";
 import { INewPost, INewUser, IUpdatePost, IUpdateUser } from "@/types";
 import { QUERY_KEYS } from "./queryKeys";
-import { string } from "zod";
 
 export const useCreateUserAccount = () => {
     return useMutation({
@@ -79,11 +78,7 @@ export const useSavePost = () => {
         }
     })
 }
-export const useCreateMessage = () => {
-    return useMutation({
-        mutationFn: ({message, userId}: {message: string; userId: string}) => createMessage(message, userId),
-    })
-}
+
 export const useDeleteSavedPost = () => {
     const queryClient = useQueryClient();
 
@@ -200,3 +195,16 @@ export const useUpdateUser = () => {
         },
     }); 
 };
+
+export const useCreateMessage = () => {
+    return useMutation({
+        mutationFn: ({message, sender, reciever}: {message: string; sender: string; reciever: string;}) => createMessage(message, sender, reciever),
+    })
+}
+
+// export const useGetMessage = () => {
+//     return useQuery({
+//         queryKey: [QUERY_KEYS.GET_MESSAGE],
+//         queryFn: getMessages,
+//     })
+// }

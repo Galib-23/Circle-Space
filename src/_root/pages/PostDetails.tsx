@@ -55,7 +55,7 @@ const PostDetails = () => {
                   <Button
                     onClick={() =>handleDeletePost(post?.$id || '', post?.imageId || '')}
                     variant="ghost"
-                    className={`post_details-delete_btn ${user.id !== post?.creator.$id && 'hidden'}`}
+                    className={`${user.id !== post?.creator.$id && 'hidden'}`}
                   >
                     <img src="/assets/icons/delete.svg" alt="delete" width={24} height={24} />
                   </Button>

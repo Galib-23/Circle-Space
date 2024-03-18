@@ -6,6 +6,8 @@ import { AllUsers, CreatePost, EditPost, Explore, Home, PostDetails, Profile, Sa
 import './globals.css';
 import { Route, Routes } from 'react-router-dom';
 import { Toaster } from "@/components/ui/toaster"
+import Chats from './_root/pages/Chats';
+import ChatRoom from './_root/pages/ChatRoom';
 
 const App = () => {
     return (
@@ -29,6 +31,8 @@ const App = () => {
                     <Route path='/posts/:id' element={<PostDetails />} />
                     <Route path='/profile/:id/*' element={<Profile />} />
                     <Route path='/update-profile/:id' element={<UpdateProfile />} />
+                    <Route path='/chats' element={<Chats />} />
+                    <Route path='/chats/:id' element={<ChatRoom />} />
                 </Route>
 
             </Routes>

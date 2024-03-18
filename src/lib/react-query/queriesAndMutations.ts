@@ -1,7 +1,8 @@
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { createPost, createUserAccount, deletePost, deleteSavedPost, getCurrentUser, getInfinitePosts, getPostById, getRecentPosts, getSavedPosts, getUserById, getUsers, likePost, savePost, searchPosts, signInAccount, signOutAccount, updatePost, updateUser } from "../appwrite/api";
+import { createMessage, createPost, createUserAccount, deletePost, deleteSavedPost, getCurrentUser, getInfinitePosts, getPostById, getRecentPosts, getSavedPosts, getUserById, getUsers, likePost, savePost, searchPosts, signInAccount, signOutAccount, updatePost, updateUser } from "../appwrite/api";
 import { INewPost, INewUser, IUpdatePost, IUpdateUser } from "@/types";
 import { QUERY_KEYS } from "./queryKeys";
+import { string } from "zod";
 
 export const useCreateUserAccount = () => {
     return useMutation({
@@ -76,6 +77,11 @@ export const useSavePost = () => {
                 queryKey: [QUERY_KEYS.GET_CURRENT_USER]
             })
         }
+    })
+}
+export const useCreateMessage = () => {
+    return useMutation({
+        mutationFn: ({message, userId}: {message: string; userId: string}) => createMessage(message, userId),
     })
 }
 export const useDeleteSavedPost = () => {

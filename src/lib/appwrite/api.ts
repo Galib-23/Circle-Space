@@ -214,6 +214,24 @@ export async function savePost(postId: string, userId: string) {
         console.log(error)
     }
 }
+
+export async function createMessage(message: string, userId: string) {
+    try {
+        const newMessage = await databases.createDocument(
+            appwriteConfig.databaseId,
+            appwriteConfig.messageCollectionId,
+            ID.unique(),
+            {
+                messageBody: message,
+                user: userId
+            }
+        )
+        if(!newMessage) throw Error;
+        return newMessage;
+    } catch (error) {
+        console.log(error);
+    }
+}
 export async function deleteSavedPost(savedRecordId: string) {
     try {
         const statusCode = await databases.deleteDocument(

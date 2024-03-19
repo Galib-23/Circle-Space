@@ -57,14 +57,12 @@ const ChatRoom = () => {
       setLoading(false); 
     }
   }
-
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       message: "",
     },
   });
-
   async function onSubmit(values: z.infer<typeof formSchema>) {
     if (!currentUser || !currentUser.$id) {
       return toast({ title: 'User not authenticated.' });

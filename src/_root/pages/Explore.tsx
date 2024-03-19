@@ -3,24 +3,18 @@ import Loader from "@/components/shared/Loader";
 import SearchResults from "@/components/shared/SearchResults";
 import { Input } from "@/components/ui/input"
 import useDebounce from "@/hooks/useDebounce";
-import { useGetPosts, useSearchPosts } from "@/lib/react-query/queriesAndMutations";
-import { useEffect, useState } from "react"
-import { useInView } from "react-intersection-observer";
+import { useGetRecentPosts, useSearchPosts } from "@/lib/react-query/queriesAndMutations";
+import { useState } from "react"
 
 
 const Explore = () => {
 
-  const { ref, inView } = useInView();
 
-  const { data: posts, fetchNextPage, hasNextPage} = useGetPosts();
+  const { data: posts} = useGetRecentPosts();
 
   const [ searchValue, setSearchValue ] = useState("");
   const debouncedValue = useDebounce(searchValue, 500);
   const { data: searchedPosts, isFetching: isSearchFetching} = useSearchPosts(debouncedValue);
-
-  useEffect(() => {
-    if(inView && !searchValue) fetchNextPage();
-  }, [inView, searchValue])
   
 
   if(!posts) {
@@ -32,7 +26,8 @@ const Explore = () => {
   }
 
   const shouldShowSearchResults = searchValue !== "";
-  const shouldShowPosts = !shouldShowSearchResults && posts.pages.every((item) => item?.documents.length === 0 )
+  const shouldShowPosts = !shouldShowSearchResults && 
+    posts.documents.every((item) => item.length === 0);
 
   return (
     <div className="explore-container">
@@ -76,18 +71,11 @@ const Explore = () => {
             />
           ) : shouldShowPosts ? (
             <p className="text-light-4 mt-10 text-center w-full">End of Posts</p>
-          ) : posts.pages.map((item, index) => (
-            <GridPostList key={`page-${index}`} posts={item.documents} />
-          ))
+          ) : (
+            <GridPostList posts={posts.documents} />
+          )
         }
       </div>
-      {
-        hasNextPage && !searchValue && (
-          <div ref={ref} className="mt-10">
-              <Loader />
-          </div>
-        )
-      }
     </div>
   )
 }

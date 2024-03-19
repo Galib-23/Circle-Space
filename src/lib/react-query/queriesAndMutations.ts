@@ -1,5 +1,5 @@
-import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { createComment, createMessage, createPost, createUserAccount, deletePost, deleteSavedPost, getComments, getCurrentUser, getInfinitePosts, getPostById, getRecentPosts, getSavedPosts, getUserById, getUsers, likePost, savePost, searchPosts, signInAccount, signOutAccount, updatePost, updateUser } from "../appwrite/api";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { createComment, createMessage, createPost, createUserAccount, deletePost, deleteSavedPost, getComments, getCurrentUser, getPostById, getRecentPosts, getSavedPosts, getUserById, getUsers, likePost, savePost, searchPosts, signInAccount, signOutAccount, updatePost, updateUser } from "../appwrite/api";
 import { INewPost, INewUser, IUpdatePost, IUpdateUser } from "@/types";
 import { QUERY_KEYS } from "./queryKeys";
 

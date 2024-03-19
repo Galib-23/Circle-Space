@@ -54,7 +54,7 @@ const ChatRoom = () => {
       setLoading(false);
     } catch (error) {
       console.log(error);
-      setLoading(false); 
+      setLoading(false);
     }
   }
   const form = useForm<z.infer<typeof formSchema>>({
@@ -99,12 +99,14 @@ const ChatRoom = () => {
           <ul>
             {filteredMessages.map((message) => (
               <li key={message.$id} className="flex justify-between items-baseline mt-3">
-                <div className="flex items-center gap-3 border-[1px] border-violet-400 w-fit p-2 rounded-xl">
-                  <img className="w-8 h-8 rounded-full" src={
+                <div className="flex items-center gap-2">
+                  <img className="w-9 h-9 rounded-full" src={
                     message.sender === currentUser.$id ?
                       currentUser.imageUrl : userChattingTo?.imageUrl
                   } alt="" />
-                  {message.messageBody}
+                  <div className={`flex items-center gap-3 border-[1px] ${message.sender === currentUser.$id ? 'bg-violet-400 text-black' : 'text-white'} border-violet-400 w-fit p-2 rounded-xl`}>
+                    <p>{message.messageBody}</p>
+                  </div>
                 </div>
                 <div>
                   <p className="text-xs">{convertTime(message.$createdAt)}</p>

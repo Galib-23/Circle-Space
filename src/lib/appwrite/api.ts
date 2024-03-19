@@ -462,3 +462,37 @@ export async function createMessage(message: string, sender: string, reciever: s
 //         console.log(error);
 //     }
 // }
+
+export async function createComment(comment: string, userId: string, userName: string, postId: string, userImage: URL,){
+    try {
+        const newComment = await databases.createDocument(
+            appwriteConfig.databaseId,
+            appwriteConfig.commentCollectionId,
+            ID.unique(),
+            {
+                comment: comment,
+                userId: userId,
+                userName: userName,
+                postId: postId,
+                userImage: userImage,
+            }
+        );
+        if(!newComment) throw Error;
+        return newComment;
+    } catch (error) {
+        console.log(error);
+    }
+}
+export async function getComments(postId: string){
+    try {
+        const postComments = await databases.listDocuments(
+            appwriteConfig.databaseId,
+            appwriteConfig.commentCollectionId,
+            [Query.equal("postId", postId), Query.limit(20)],
+        )
+        if(!postComments) throw Error;
+        return postComments;
+    } catch (error) {
+        console.log(error);
+    }
+}

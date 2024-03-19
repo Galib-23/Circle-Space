@@ -21,4 +21,7 @@ export enum QUERY_KEYS {
 
   //Message keys
   GET_MESSAGE = 'getMessage',
+
+  //Comments Keys
+  GET_POST_COMMENTS = 'getPostComments',
 }

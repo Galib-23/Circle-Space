@@ -9,7 +9,7 @@ const Chats = () => {
     <div>
       <div className="flex-1 p-8">
         <h2 className="text-white text-lg lg:text-2xl font-bold mb-6">
-          People you may know
+          My chats
         </h2>
           {isUserLoading ? (
             <Loader />

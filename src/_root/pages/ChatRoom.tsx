@@ -33,7 +33,7 @@ const ChatRoom = () => {
     getMessages();
     const unsubscribe = client.subscribe(`databases.${appwriteConfig.databaseId}.collections.${appwriteConfig.messageCollectionId}.documents`, response => {
       if (response.events.includes("databases.*.collections.*.documents.*.create")) {
-        setMessages(prevState => [response.payload, ...prevState]);
+        setMessages((prevState: any) => [response.payload, ...prevState]);
       }
     });
 

@@ -3,6 +3,7 @@ import { timeAgo } from "@/lib/utils";
 import { Models } from "appwrite"
 import { Link } from "react-router-dom";
 import PostStats from "./PostStats";
+import { MdVerified } from "react-icons/md";
 
 type PostCardProps = {
     post: Models.Document;
@@ -23,7 +24,7 @@ const PostCard = ({ post }: PostCardProps) => {
                         <img src={post?.creator?.imageUrl || '/assets/icons/profile-placeholder.svg'} alt="creator" className="rounded-full w-12 lg:h-12" />
                     </Link>
                     <div className="flex flex-col">
-                        <p className="base-medium lg:body-bold text-light-1">{post.creator.name}</p>
+                        <p className="base-medium flex items-center gap-2 lg:body-bold text-light-1">{post.creator.name} {post.creator.$id === '65e5f7d40c6a5cb1ca6f' && <MdVerified className="text-blue-500"/>}</p>
                         <div className="flex-center gap-2 text-light-3">
                             <p className="subtle-semibold lg:small-regular">{time}</p>
                             -

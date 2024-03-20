@@ -32,7 +32,7 @@ const GridPostList = ({ posts, showUser = true, showStats = true }: GridPostList
         <ul className="grid-container">
             {
                 posts?.map((post: any) => (
-                    <li key={post.$id} className="relative min-w-80 h-80">
+                    <li key={post.$id} className="relative min-w-64 h-80">
                         <Link to={`/posts/${post.$id}`} className="grid-post_link">
                             <img src={post.imageUrl} alt="post" className="h-full w-full object-cover" />
                         </Link>
@@ -45,13 +45,12 @@ const GridPostList = ({ posts, showUser = true, showStats = true }: GridPostList
                                             alt="creator"
                                             className="h-8 w-8 rounded-full"
                                         />
-                                        <p className="line-clamp-1">{post.creator.name}</p>
                                     </div>
                                 )
                             }
                             {
                                 showStats ? (
-                                    <PostStats post={post} userId={user.id} />
+                                    <PostStats post={post} userId={user.id} showComment={false}/>
                                 ) : (
                                     <MdDelete onClick={()=>handleDeleteSavedPost(post)} className="text-2xl cursor-pointer text-red" />
                                 )

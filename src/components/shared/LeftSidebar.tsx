@@ -5,6 +5,7 @@ import { useUserContext } from "@/context/AuthContext";
 import { sidebarLinks } from "@/constants";
 import { INavLink } from "@/types";
 import { Button } from "../ui/button";
+import Swal from "sweetalert2";
 
 const LeftSidebar = () => {
 
@@ -16,6 +17,27 @@ const LeftSidebar = () => {
   useEffect(() => {
     if (isSuccess) navigate(0);
   }, [isSuccess])
+
+  const handleSignOut = () => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, Log out!"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        signOut()
+        Swal.fire({
+          title: "Logged out!",
+          text: "You are successfully logged out.",
+          icon: "success"
+        });
+      }
+    });
+  }
 
   return (
     <nav className="leftsidebar">
@@ -54,7 +76,7 @@ const LeftSidebar = () => {
       </div>
 
       <Button
-        onClick={() => signOut()}
+        onClick={handleSignOut}
         variant="ghost"
         className="shad-button_ghost">
         <img

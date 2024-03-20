@@ -123,7 +123,7 @@
 
   /* Explore */
   .explore-container {
-    @apply flex flex-col flex-1 items-center overflow-scroll py-10 px-5 md:p-14 custom-scrollbar;
+    @apply flex flex-col flex-1 items-center overflow-scroll py-10 md:px-5 md:p-14 custom-scrollbar;
   }
 
   .explore-inner_container {

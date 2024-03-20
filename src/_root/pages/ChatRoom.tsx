@@ -85,14 +85,13 @@ const ChatRoom = () => {
     (message.sender === currentUser?.$id && message.reciever === id) ||
     (message.reciever === currentUser?.$id && message.sender === id)
   );
-  console.log(filteredMessages)
   return (
-    <div className="h-screen flex flex-col w-full p-1 lg:p-10">
-      <Link to={`/chats/${userChattingTo?.$id}`} className="flex items-center gap-3 mb-8">
+    <div className="h-screen flex flex-col justify-between w-full p-1 lg:p-10">
+      <Link to={`/profile/${userChattingTo?.$id}`} className="flex items-center gap-3 mb-8 sticky">
         <img className="h-16 w-16 rounded-full border-2 border-violet-700" src={userChattingTo?.imageUrl} alt="P" />
         <p className="text-lg">{userChattingTo?.name}</p>
       </Link>
-      <div className="flex-1 overflow-y-scroll">
+      <div className="overflow-y-scroll flex-1">
         {loading ? (
           <Loader />
         ) : (
@@ -105,7 +104,7 @@ const ChatRoom = () => {
                       currentUser.imageUrl : userChattingTo?.imageUrl
                   } alt="" />
                   <div className={`flex items-center gap-3 border-[1px] ${message.sender === currentUser.$id ? 'bg-violet-400 text-black' : 'text-white'} border-violet-400 w-fit p-2 rounded-xl`}>
-                    <p>{message.messageBody}</p>
+                    <p className="text-sm">{message.messageBody}</p>
                   </div>
                 </div>
                 <div>
@@ -118,7 +117,7 @@ const ChatRoom = () => {
         )}
       </div>
 
-      <div className="mt-4">
+      <div className="w-full bottom-0">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
             <FormField

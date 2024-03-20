@@ -33,6 +33,9 @@ const Profile = () => {
       }
       <h2 className="text-xl font-semibold mt-9 mb-2">Posts</h2>
       {
+        userPosts?.length === 0 && <p className="text-md">No posts yet 🤷🏻‍♂️</p>
+      }
+      {
         isPending ? <Loader /> : (
           <GridPostList posts={userPosts || []} showStats={true} />
         )
